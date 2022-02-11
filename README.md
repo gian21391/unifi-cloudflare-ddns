@@ -31,3 +31,4 @@ I have a UniFi Security Gateway (USG) and a Cloud Key Gen2 Plus (UCK-G2-PLUS), a
 - [inadyn](https://github.com/troglobit/inadyn) is an open-source application that supports different dynamic DNS providers. It's used by UniFi OS under-the-hood to update your public IP address.
 - [inadyn-cloudflare](https://github.com/blackjid/inadyn-cloudflare) much of the code for this project is taken from [blackjid](https://github.com/blackjid)'s project.
 - [Cloudflare Workers Basic Auth Example](https://developers.cloudflare.com/workers/examples/basic-auth)
+- [willswire](https://github.com/willswire) created the original script for the [UniFi Dream Machine Pro (UDM-Pro)](https://github.com/willswire/unifi-cloudflare-ddns).
