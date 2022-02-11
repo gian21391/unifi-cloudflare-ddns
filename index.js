@@ -25,19 +25,15 @@ async function handleRequest(request) {
       });
 
     case "/update": {
-      if (request.headers.has("Authorization")) {
-        const { username, password } = basicAuthentication(request);
 
-        // Throws exception when query parameters aren't formatted correctly
-        const url = new URL(request.url);
-        verifyParameters(url);
+      // Throws exception when query parameters aren't formatted correctly
+      const url = new URL(request.url);
+      verifyParameters(url);
 
-        // Only returns this response when no exception is thrown.
-        const response = await informAPI(url, username, password);
-        return response;
-      }
+      // Only returns this response when no exception is thrown.
+      const response = await informAPI(url);
+      return response;
 
-      throw new BadRequestException("Please provide valid credentials.");
     }
 
     case "/favicon.ico":
@@ -55,17 +51,20 @@ async function handleRequest(request) {
  * @param {String} token
  * @returns {Promise<Response>}
  */
-async function informAPI(url, name, token) {
+async function informAPI(url) {
   // Parse Url
-  const hostname = url.searchParams.get("hostname");
+  const host = url.searchParams.get("host");
+  const domain = url.searchParams.get("domain");
+  const token = url.searchParams.get("password");
   const ip = url.searchParams.get("ip");
+  const hostname = host + "." + domain;
 
   // Initialize API Handler
   const cloudflare = new Cloudflare({
     token: token,
   });
 
-  const zone = await cloudflare.findZone(name);
+  const zone = await cloudflare.findZone(domain);
   const record = await cloudflare.findRecord(zone, hostname);
   const result = await cloudflare.updateRecord(record, ip);
 
@@ -89,8 +88,16 @@ function verifyParameters(url) {
     throw new BadRequestException("You must include proper query parameters");
   }
 
-  if (!url.searchParams.get("hostname")) {
-    throw new BadRequestException("You must specify a hostname");
+  if (!url.searchParams.get("domain")) {
+    throw new BadRequestException("You must specify a domain");
+  }
+
+  if (!url.searchParams.get("host")) {
+    throw new BadRequestException("You must specify a host");
+  }
+
+  if (!url.searchParams.get("password")) {
+    throw new BadRequestException("You must specify a password");
   }
 
   if (!url.searchParams.get("ip")) {
